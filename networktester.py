@@ -369,7 +369,7 @@ else:
 
                     s = '{:<21}'.format(int(bps_period)) + s
                 else:
-                    s = '{:<21}'.format(0)
+                    s = 'Waiting for connection...'
                 print(s)
                 
                 if listen_once:
