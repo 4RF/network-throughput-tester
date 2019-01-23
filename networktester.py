@@ -195,6 +195,8 @@ if listen == False:
     # Create a TCP/IP socket
     if use_tcp:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Use TCP_NODELAY, so that the packets are sent with the size we specify
+        sock.setsockopt(socket.SOL_TCP, socket.TCP_NODELAY, 1)
     else:
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
