@@ -452,15 +452,12 @@ else:
                     data = readdata
                 
                 if len(data) > 0:
-                    connection_list[address][3] += len(data)
-                    connection_list[address][5] += len(data)
+                    connection_list[address][3] += len(readdata)
+                    connection_list[address][5] += len(readdata)
                     
                     while len(data) >= 12:
                         magic = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3]
                         pktlen = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | data[7]
-                        
-                        connection_list[address][2] += 1
-                        connection_list[address][4] += 1
                         
                         if magic != 0xBAADF00D:
                             print('{}: magic number mismatch {} != {}'.format(str(address[0])+":"+str(address[1]), magic, 0xBAADF00D))
@@ -470,6 +467,8 @@ else:
                             data = None
                         else:
                             if len(data) >= pktlen:
+                                connection_list[address][2] += 1
+                                connection_list[address][4] += 1
                                 seq = (data[8] << 24) | (data[9] << 16) | (data[10] << 8) | data[11]
                                 last_seq = connection_list[address][6]
                                 if last_seq == None:
