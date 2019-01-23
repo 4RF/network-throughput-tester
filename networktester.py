@@ -132,8 +132,14 @@ if sweep and not(listen) and not(sweep_step_sizes):
 
 # Calculate the size of each packet at the ethernet layer
 udp_overhead = 8
+tcp_overhead = 20
 ip4_overhead = 20
 eth_overhead = 18 # 14 byte header + 4 byte crc. 8 byte preamble not included
+
+if use_tcp:
+    proto_overhead = tcp_overhead
+else:
+    proto_overhead = tcp_overhead
 
 sock = None
 exiting = False
@@ -203,7 +209,7 @@ if listen == False:
     
     if sweep:
         packet_size = sweep_step_sizes[0]
-        print('Sweeping payload size from {} bytes to {} bytes (plus ethernet overhead of {} bytes'.format(sweep_step_sizes[0], sweep_step_sizes[-1], udp_overhead + ip4_overhead + eth_overhead) )
+        print('Sweeping payload size from {} bytes to {} bytes (plus ethernet overhead of {} bytes'.format(sweep_step_sizes[0], sweep_step_sizes[-1], proto_overhead + ip4_overhead + eth_overhead) )
     
     print('Ethernet bitrate = {:.0f} bps'.format(bitrate))
 
@@ -245,7 +251,7 @@ if listen == False:
                     packets_sent = 0
                     start_time = time.monotonic()
                     last_packet_size = packet_size
-                    packet_size_eth_bits = (packet_size + udp_overhead + ip4_overhead + eth_overhead) * 8
+                    packet_size_eth_bits = (packet_size + proto_overhead + ip4_overhead + eth_overhead) * 8
                     delay_time = float(packet_size_eth_bits) / float(bitrate)
                     print('Sending payload = {} bytes (plus ethernet overhead {} bytes)'.format(packet_size, packet_size_eth_bits / 8))
                     #print('Delay between packets = {:.02f} ms'.format(delay_time * 1000.0))
@@ -354,8 +360,8 @@ else:
                     period_dropped_bytes += connection_list[c][8]
                     total_dropped_bytes += connection_list[c][10]
                     
-                    bps_period = (connection_list[c][5] + connection_list[c][4] * (udp_overhead + ip4_overhead + eth_overhead)) * 8.0 / period
-                    bps_total = (connection_list[c][3] + connection_list[c][2] * (udp_overhead + ip4_overhead + eth_overhead)) * 8.0 / (current_time - connection_list[c][1])
+                    bps_period = (connection_list[c][5] + connection_list[c][4] * (proto_overhead + ip4_overhead + eth_overhead)) * 8.0 / period
+                    bps_total = (connection_list[c][3] + connection_list[c][2] * (proto_overhead + ip4_overhead + eth_overhead)) * 8.0 / (current_time - connection_list[c][1])
                     s += '{:<21}'.format(int(bps_period))
                     
                     connection_list[c][4] = 0
@@ -364,8 +370,8 @@ else:
                     connection_list[c][8] = 0
                 
                 if total_start_time != None:
-                    bps_period = (period_bytes + period_packets * (udp_overhead + ip4_overhead + eth_overhead)) * 8.0 / period
-                    bps_total = (total_bytes + total_packets * (udp_overhead + ip4_overhead + eth_overhead)) * 8.0 / (current_time - total_start_time)
+                    bps_period = (period_bytes + period_packets * (proto_overhead + ip4_overhead + eth_overhead)) * 8.0 / period
+                    bps_total = (total_bytes + total_packets * (proto_overhead + ip4_overhead + eth_overhead)) * 8.0 / (current_time - total_start_time)
 
                     s = '{:<21}'.format(int(bps_period)) + s
                 else:
@@ -388,8 +394,8 @@ else:
                         calc_period = last_rx_time - start_time
                         #print period_num_packets, period_total_data, calc_period
                         if period_num_packets > 0:
-                            bps_period = (period_total_data + period_num_packets * (udp_overhead + ip4_overhead + eth_overhead)) * 8.0 / calc_period
-                            print('{:<22}{:>14}{:>12}{:>9}{:>10.2f}{:>11}'.format(str(c[0])+":"+str(c[1]), sweep_rx_length, sweep_rx_length + udp_overhead + ip4_overhead + eth_overhead, period_num_packets, calc_period, int(bps_period)))
+                            bps_period = (period_total_data + period_num_packets * (proto_overhead + ip4_overhead + eth_overhead)) * 8.0 / calc_period
+                            print('{:<22}{:>14}{:>12}{:>9}{:>10.2f}{:>11}'.format(str(c[0])+":"+str(c[1]), sweep_rx_length, sweep_rx_length + proto_overhead + ip4_overhead + eth_overhead, period_num_packets, calc_period, int(bps_period)))
                         
                         connection_list[c][4] = 0
                         connection_list[c][5] = 0
