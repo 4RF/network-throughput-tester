@@ -109,7 +109,7 @@ if (packet_size < 12) or ((sweep == True) and sweep_start_size and (sweep_start_
     sys.exit(1)
 
 if (packet_size > 1472) or ((sweep == True) and sweep_max_size and (sweep_max_size > 1472)):
-    print('packet size must be 1272 bytes or less')
+    print('packet size must be 1472 bytes or less')
     usage()
     sys.exit(1)
 
