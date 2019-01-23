@@ -17,7 +17,7 @@ import signal
 import time
 import select
 
-sw_version_number = "1.3"
+sw_version_number = "1.4"
 
 listen_port_number = 20000
 send_port_number = 0
