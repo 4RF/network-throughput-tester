@@ -139,7 +139,7 @@ eth_overhead = 18 # 14 byte header + 4 byte crc. 8 byte preamble not included
 if use_tcp:
     proto_overhead = tcp_overhead
 else:
-    proto_overhead = tcp_overhead
+    proto_overhead = udp_overhead
 
 sock = None
 exiting = False
